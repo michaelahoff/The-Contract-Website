@@ -45,8 +45,11 @@ MEDIA_URL = "/site_media/media/"
 # in apps" "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 
-#TODO: figure out a place to deployably serve our static files from that doesn't serve source
-STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
+if "STATIC_DIR" in os.environ:
+    STATIC_ROOT = os.environ["STATIC_DIR"]
+else:
+    #TODO: figure out a place to deployably serve our static files from that doesn't serve source
+    STATIC_ROOT = os.path.join(PROJECT_ROOT, "static")
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -54,7 +57,7 @@ STATIC_URL = "/static/"
 
 # Additional locations of static files
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, "static", "dist"),
+    os.path.join(STATIC_ROOT, "dist"),
 ]
 
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.ManifestStaticFilesStorage"

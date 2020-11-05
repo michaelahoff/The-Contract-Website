@@ -27,6 +27,8 @@ if DEBUG:
         '127.0.0.1',
         'localhost'
     ]
+    if "ALLOWED_HOSTS" in os.environ:
+        ALLOWED_HOSTS = os.environ["ALLOWED_HOSTS"].split(',')
 else:
     ALLOWED_HOSTS = [
         'hgapp-dev.us-west-2.elasticbeanstalk.com',

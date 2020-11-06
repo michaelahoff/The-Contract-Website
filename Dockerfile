@@ -30,6 +30,7 @@ RUN set -ex && \
 RUN set -ex && \
     apk add \
         libjpeg-turbo \
+        postgresql-dev \
         zlib
 
 COPY . /code

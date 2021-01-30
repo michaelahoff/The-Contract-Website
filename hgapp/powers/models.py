@@ -4,6 +4,7 @@ from django.db import models
 # Create your models here.
 from characters.models import Character, HIGH_ROLLER_STATUS
 from guardian.shortcuts import assign_perm, remove_perm
+from django.utils.html import mark_safe, escape, linebreaks
 
 ACTIVATION_STYLE = (
     ('PASSIVE', 'Passive'),
@@ -483,6 +484,20 @@ class Power(models.Model):
         if player != self.created_by:
             remove_perm('view_private_power', player, self)
 
+    def render_system(self):
+        default_system = linebreaks(escape(self.system))
+        value_by_name = {param_val.relevant_power_param.relevant_parameter.name :
+                             param_val.relevant_power_param.relevant_parameter.get_value_for_level(level=param_val.value)
+                         for param_val in self.parameter_value_set.all()}
+        rendered_system = default_system
+        for name, value in value_by_name.items():
+            replaceable_name = str.format("[[{}]]",
+                                          name.lower().replace(" ", "-"))
+            formatted_value = str.format("<b>{}</b>", value)
+
+            rendered_system = rendered_system.replace(replaceable_name, formatted_value)
+        return mark_safe(rendered_system)
+
     def archive_txt(self):
         output = "{}\nA {} point {} {} power\nCreated by {}\n"
         output = output.format(self.name, self.get_point_value(), self.get_activation_style_display(), self.base.name, self.created_by.username)
@@ -590,3 +605,9 @@ class Parameter_Value(models.Model):
         return output
 
     level_description = property(get_level_description)
+
+class PowerTutorial(models.Model):
+    modal_base = models.TextField(max_length=3000)
+    modal_base_header = models.TextField(max_length=3000)
+    modal_edit_header = models.TextField(max_length=3000)
+    modal_edit = models.TextField(max_length=3000)

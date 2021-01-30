@@ -1,0 +1,105 @@
+{% load bootstrap %}
+{% load cache %}
+
+
+<div class="panel panel-default">
+    <h2 class = "text-center" data-toggle="tooltip" title='{{tutorial.core_info|safe}}'>
+        Essentials
+        <br>
+    <button type="button" class="btn btn-primary btn-xs" data-toggle="modal" data-target="#tutorialModal">
+        What Makes a Contractor?
+    </button>
+    </h2>
+
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-xs-12">
+                <div id="css-name-field" class="css-essential-field">
+                    {{ char_form.name}}
+                    <figcaption class="help-block">
+                        {{ char_form.name.help_text|safe}}
+                    </figcaption>
+                </div>
+                <div class="clearfix visible-xs-block"></div>
+                <span class="css-essential-text"> is a </span>
+                <div id="css-concept-field" class="css-essential-field"  >
+                    {{ char_form.concept_summary}}
+                    <figcaption class="help-block">
+                        {{ char_form.concept_summary.help_text|safe}}
+                    </figcaption>
+                </div>
+                <div class="clearfix visible-xs-block visible-sm-block visible-md-block"></div>
+                <span class="css-essential-text"> who will risk </span>
+                <div id="css-pronoun-field" class="css-essential-field">
+                    {{char_form.pronoun}}
+                </div>
+                <span class="css-essential-text"> life in the Games </span>
+                <div class="visible-lg-block css-new-row"></div>
+                <span class="css-essential-text"> for a chance to </span>
+                <div id="css-ambition-field" class="css-essential-field">
+                    {{ char_form.ambition}}
+                    <figcaption class="help-block">
+                        {{ char_form.ambition.help_text|safe}}
+                    </figcaption>
+                </div>
+                <span class="css-essential-text visible-lg-block"> .</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12">
+                <span class="css-essential-text"> They are </span>
+                <div id="css-age-field" class="css-essential-field">
+                    {{ char_form.age}}
+                    <figcaption class="help-block">
+                        {{ char_form.age.help_text|safe}}
+                    </figcaption>
+                </div>
+                <span class="css-essential-text"> years old, and usually appear as</span>
+                <div class="visible-sm-block visible-md-block visible-xs-block css-new-row"></div>
+                <div id="css-appearance-field" class="css-essential-field">
+                    {{ char_form.appearance}}
+                    <figcaption class="help-block">
+                        {{ char_form.appearance.help_text|safe}}
+                    </figcaption>
+                </div>
+                <span class="css-essential-text visible-md-block visible-lg-block"> .</span>
+            </div>
+        </div>
+        <hr>
+        <div class="row">
+            <div class="col-xs-12">
+                {% if user.is_authenticated %}
+                    <div id="css-checked-field" class="css-essential-field">
+                        {{ char_form.private | bootstrap}}
+                    </div>
+                {% endif %}
+
+                {% if char_form.cell %}
+                    <div id="css-cell-field" class="css-essential-field">
+                        {{ char_form.cell | bootstrap}}
+                    </div>
+                {% endif %}
+                <span class="css-essential-text visible-md-block visible-lg-block"> </span>
+                <div id="css-tagline-field" class="css-essential-field">
+                    {{ char_form.tagline | bootstrap}}
+                </div>
+            </div>
+        </div>
+        {% if charon_coin_form %}
+            <div class="row">
+                <div class="col-xs-10 col-xs-offset-1 alert alert-info text-center" role="alert" >
+                    <label data-toggle="tooltip" data-placement="bottom" title='{{tutorial.charon_coin}}'>
+                        {{ charon_coin_form.spend_coin }} Spend a Charon Coin on this Character
+                    </label>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% if character %}
+    {% include "characters/edit_pages/edit_character_stats.html" %}
+{% else %}
+    {% cache 5000 new-character %}
+        {% include "characters/edit_pages/edit_character_stats.html" %}
+    {% endcache %}
+{% endif %}

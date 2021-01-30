@@ -4,7 +4,7 @@ from .forms import EnhancementDrawbackPickerForm, TagPickerForm
 
 from .models import Enhancement, Parameter, Base_Power, Drawback, Power_Param, Power, Parameter_Value, \
     Base_Power_Category, Base_Power_System, PowerTag, PremadeCategory,\
-    Enhancement_Instance, Drawback_Instance, Power_Full
+    Enhancement_Instance, Drawback_Instance, Power_Full, PowerTutorial
 
 class PowerParamTabular(admin.TabularInline):
     model = Power_Param
@@ -40,7 +40,6 @@ class ParameterAdmin(admin.ModelAdmin):
 
 @admin.register(Base_Power)
 class BasePowerAdmin(admin.ModelAdmin):
-    form = EnhancementDrawbackPickerForm
     prepopulated_fields = {"slug": ("name",)}
     list_display = ('name', 'category', 'is_public')
     inlines = [PowerParamTabular, SystemInline]
@@ -75,3 +74,4 @@ admin.site.register(Base_Power_System)
 admin.site.register(Parameter_Value)
 admin.site.register(Enhancement_Instance)
 admin.site.register(Drawback_Instance)
+admin.site.register(PowerTutorial)

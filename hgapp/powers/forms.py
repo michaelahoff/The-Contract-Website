@@ -20,14 +20,15 @@ def set_field_html_name(cls, new_name):
 class EnhancementDrawbackPickerForm(forms.ModelForm):
     # used in the admin app for base_power
     def  __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super(EnhancementDrawbackPickerForm, self).__init__(*args, **kwargs)
         self.fields['enhancements'].queryset = Enhancement.objects.order_by("-is_general").all()
         self.fields['drawbacks'].queryset = Drawback.objects.order_by("-is_general").all()
+
 
 class TagPickerForm(forms.ModelForm):
     # used in the admin app for PremadeCategory
     def  __init__(self, *args, **kwargs):
-        super().__init__(self, *args, **kwargs)
+        super(TagPickerForm, self).__init__(*args, **kwargs)
         self.fields['tags'].queryset = PowerTag.objects.order_by("tag").all()
 
 class DrawbackModelForm(forms.ModelForm):
@@ -52,8 +53,10 @@ def make_enhancement_form(enhancement, enhancement_instance=None):
         label= get_label(enhancement)
         enhancement_slug=str(enhancement.slug)
         eratta = enhancement.eratta
-        multiplicity_allowed=enhancement.multiplicity_allowed;
-        is_selected = forms.BooleanField(required=True, label=label)
+        multiplicity_allowed=enhancement.multiplicity_allowed
+        is_selected = forms.BooleanField(required=True,
+                                         label=label,
+                                         widget=forms.CheckboxInput(attrs={'data-name': enhancement.name}))
         form_name = enhancement.form_name()
         if enhancement_instance:
             is_selected.initial=True
@@ -81,8 +84,10 @@ def make_drawback_form(drawback):
         label= get_label(drawback)
         eratta = drawback.eratta
         drawback_slug=str(drawback.slug)
-        multiplicity_allowed=drawback.multiplicity_allowed;
-        is_selected = forms.BooleanField(required=True, label=label)
+        multiplicity_allowed=drawback.multiplicity_allowed
+        is_selected = forms.BooleanField(required=True,
+                                         label=label,
+                                         widget=forms.CheckboxInput(attrs={'data-name': drawback.name}))
         set_field_html_name(is_selected, drawback.form_name())
         if drawback.detail_field_label is not "" and drawback.detail_field_label is not None:
             detail_text = forms.CharField(required=False,
@@ -111,9 +116,14 @@ class CreatePowerForm(forms.Form):
                              help_text='A snippet of text that introduces the power in a flavorful way')
     description = forms.CharField(label='Description',
                                   widget=forms.Textarea,
-                                  help_text='Describe what the power looks like when it is used, how it works, and its impact on the owner, target, and environment')
+                                  help_text='Describe what the power looks like when it is used, how it works, '
+                                            'and its impact on the owner, target, and environment. All Powers '
+                                            'are obviously supernatural unless stated otherwise.')
     system = forms.CharField(label='System', widget=forms.Textarea,
-                             help_text='Describe the power\'s cost, associated roll(s), determination of outcome, conditions, etc')
+                             help_text='Describe this Power\'s cost, associated roll(s), conditions, and determination of outcome. '
+                                       'You can reference the value of a Parameter by typing its name in lowercase, '
+                                       'surrounded by double brackets, with spaces replaced by hyphens. For example, to display the value '
+                                       'of a Power\'s "Cast Time" Parameter, write "[[cast-time]]".')
     activation_style = forms.ChoiceField(choices=ACTIVATION_STYLE, disabled=True)
     tags = forms.ModelMultipleChoiceField(queryset=PowerTag.objects.order_by("tag").all(),
                                           required=False,

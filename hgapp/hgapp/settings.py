@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import pytz
 
 try:
     os.environ['SECRET_KEY']
@@ -32,8 +33,10 @@ else:
         'hgapp-dev.us-west-2.elasticbeanstalk.com',
         'thecontractgame.com',
         'www.thecontractgame.com',
+        'thecontractrpg.com',
+        'www.thecontractrpg.com',
     ]
-    SESSION_COOKIE_DOMAIN = ".thecontractgame.com"
+    SESSION_COOKIE_DOMAIN = ".thecontractrpg.com"
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -251,7 +254,6 @@ else:
         }
     }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
@@ -269,6 +271,23 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Caching
+if DEBUG:
+    pass
+    """
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+        }
+    }
+    """
+else:
+    CACHES = {
+        'default': {
+            'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
+            'LOCATION': '127.0.0.1:11211',
+        }
+    }
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
@@ -313,7 +332,7 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 2
 ACCOUNT_USE_AUTH_AUTHENTICATE = True
 ACCOUNT_DELETION_EXPUNGE_CALLBACK = do_nothing
-
+ACCOUNT_TIMEZONES = list(zip(pytz.common_timezones, pytz.common_timezones))
 
 
 AUTHENTICATION_BACKENDS = [
